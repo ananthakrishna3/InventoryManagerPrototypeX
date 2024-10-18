@@ -18,6 +18,8 @@ router.use(cookieParser())
 const { cookie } = require('express/lib/response');
 
 
+
+
 module.exports.loginCheck = async (req, res) => {
     try {
         console.log('Login authorization')
@@ -32,9 +34,10 @@ module.exports.loginCheck = async (req, res) => {
 
         if (email === 'aeroclubnitte@nmamit.in' && pass === 'aeroclub123') {
             console.log('Admin login successful')
-            const token = jwt.sign({ email }, 'sfhsfhsfhfsiofhiosghiogjiogjdoghfioghioghfodiofghdfiogh')
+            // const eMail= {email}
+            const token = jwt.sign(email, 'sfhsfhsfhfsiofhiosghiogjiogjdoghfioghioghfodiofghdfiogh',{expiresIn:'1d'})
             console.log(token)
-            res.cookie('authcookie', token, { maxAge: 120 * 60 * 1000, httpOnly: true })
+            res.cookie('authToken', token, { httpOnly: true, secure: true })
             res.cookie('email', email)
             res.redirect('/users/dashboard')
         } else {
@@ -79,3 +82,9 @@ module.exports.loginCheck = async (req, res) => {
         console.log('Login error', error)
     }
 }
+
+module.exports.logout= async (req,res)=>{
+    res.cookie('authToken', '', { httpOnly: true, expires: new Date(0) });
+    res.redirect('/users/login')
+}   
+

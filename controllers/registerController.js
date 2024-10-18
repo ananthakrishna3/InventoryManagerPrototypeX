@@ -6,6 +6,7 @@ const router = express.Router()
 const bcrypt = require('bcrypt')
 const session = require('express-session')
 const flash = require('express-flash')
+const alert = require('alert-node')
 router.use(express.urlencoded({ extended: false }))
 router.use(bodyParser.urlencoded({ extended: true }))
 router.use(bodyParser.json())
@@ -48,13 +49,14 @@ module.exports.registration = async (req, res) => {
                     console.log(results.rows);
 
                     if (results.rows.length>0) {
+                        alert('user already exists')
                         return res.render('register', { "success_message": "email already registered!" })
                         
                     } else {
                         pool.query('insert into users(username,email,pass) values ($1,$2,$3)', [usernameArray, emailArray, hashedPassArray],
                             (err, results) => {
                                 if (err) {
-                                    console.log('error 1')
+                                    console.log('error while inserting of registration')
                                     throw err
                                 }
                                 console.log(errors.rows)

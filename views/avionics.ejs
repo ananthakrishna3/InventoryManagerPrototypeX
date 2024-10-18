@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Avionics</title>
+    <link rel="stylesheet" href="dashStyle_2.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        display: flex;
+        height: 100vh;
+        /* width:max-content; */
+        background-color: #f4f4f4;
+      }
+
+      .container {
+        display: flex;
+        width: 100%;
+      }
+
+      .sidebar {
+        width: 250px;
+        background-color: #0c479f;
+        padding: 20px;
+        color: #fff;
+        margin-left: -9.5%;
+      }
+
+      
+
+      .sidebar h2 {
+        margin-bottom: 20px;
+        font-size: 24px;
+      }
+
+      .sidebar ul {
+        list-style: none;
+        margin-left: -10%;
+      }
+
+      .sidebar ul li {
+        margin-bottom: 15px;
+        margin-left: -5%;
+      }
+
+      .sidebar ul li a {
+        color: #ecf0f1;
+        text-decoration: none;
+        display: block;
+        padding: 10px;
+        border-radius: 4px;
+        transition: background 0.3s;
+      }
+
+      .sidebar ul li a:hover {
+        background-color: #2980b9;
+      }
+
+      .main-content {
+        flex-grow: 1;
+        padding: 1em;
+        margin-top: 1em;
+        margin-left: 3em;
+      }
+
+      .header {
+        margin-bottom: 20px;
+      }
+
+      .header h1 {
+        font-size: 28px;
+        color: #333;
+      }
+
+      .chart-section {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      canvas {
+        max-width: 100%;
+        height: 100%;
+      }
+
+      /* tabs */
+      /*
+ CSS for the main interaction
+*/
+      .tabset > input[type="radio"] {
+        position: absolute;
+        left: -200vw;
+      }
+
+      .tabset .tab-panel {
+        display: none;
+      }
+
+      .tabset > input:first-child:checked ~ .tab-panels > .tab-panel:first-child,
+      .tabset > input:nth-child(3):checked ~ .tab-panels > .tab-panel:nth-child(2),
+      .tabset > input:nth-child(5):checked ~ .tab-panels > .tab-panel:nth-child(3),
+      .tabset > input:nth-child(7):checked ~ .tab-panels > .tab-panel:nth-child(4),
+      .tabset > input:nth-child(9):checked ~ .tab-panels > .tab-panel:nth-child(5),
+      .tabset > input:nth-child(11):checked ~ .tab-panels > .tab-panel:nth-child(6) ,
+      .tabset > input:nth-child(13):checked ~ .tab-panels > .tab-panel:nth-child(7),
+      .tabset > input:nth-child(15):checked ~ .tab-panels > .tab-panel:nth-child(8),
+      .tabset > input:nth-child(17):checked ~ .tab-panels > .tab-panel:nth-child(9),
+      .tabset > input:nth-child(19):checked ~ .tab-panels > .tab-panel:nth-child(10),
+      .tabset > input:nth-child(21):checked ~ .tab-panels > .tab-panel:nth-child(11),
+      .tabset > input:nth-child(23):checked ~ .tab-panels > .tab-panel:nth-child(12),
+      .tabset > input:nth-child(25):checked ~ .tab-panels > .tab-panel:nth-child(13),
+      .tabset > input:nth-child(27):checked ~ .tab-panels > .tab-panel:nth-child(14),
+      .tabset > input:nth-child(29):checked ~ .tab-panels > .tab-panel:nth-child(15),
+      .tabset > input:nth-child(31):checked ~ .tab-panels > .tab-panel:nth-child(16),
+      .tabset > input:nth-child(33):checked ~ .tab-panels > .tab-panel:nth-child(17)
+      {
+        display: block;
+      }
+
+      .tabset > label {
+        position: relative;
+        display: inline-block;
+        padding: 15px 15px 25px;
+        border: 1px solid transparent;
+        border-bottom: 0;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .tabset > label::after {
+        content: "";
+        position: absolute;
+        left: 15px;
+        bottom: 10px;
+        width: 22px;
+        height: 4px;
+        background: #8d8d8d;
+      }
+
+      input:focus-visible + label {
+        outline: 2px solid rgba(0, 102, 204, 1);
+        border-radius: 3px;
+      }
+
+      .tabset > label:hover,
+      .tabset > input:focus + label,
+      .tabset > input:checked + label {
+        color: #06c;
+      }
+
+      .tabset > label:hover::after,
+      .tabset > input:focus + label::after,
+      .tabset > input:checked + label::after {
+        background: #06c;
+      }
+
+      .tabset > input:checked + label {
+        border-color: #ccc;
+        border-bottom: 1px solid #fff;
+        margin-bottom: -1px;
+      }
+
+      .tab-panel {
+        padding: 30px 0;
+        border-top: 1px solid #ccc;
+      }
+
+      /*
+ Demo purposes only
+*/
+      *,
+      *:before,
+      *:after {
+        box-sizing: border-box;
+      }
+
+      .tabset {
+        max-width: 65em;
+      }
+      /* tabs end here */
+
+      /* modal window */
+      .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding : 100px; /* Location of the box */
+        left: 15% !important;
+        top: 3em;
+        width: 75%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        /* Fallback color */
+         /* Black w/ opacity */
+      }
+
+      /* Modal Content */
+      .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+      }
+
+      /* The Close Button */
+      .close
+      {
+        color: #aaaaaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+
+      .close:hover
+      .close1:hover
+      .close2:hover
+      .close3:hover
+      .close4:hover
+      .close5:hover
+      .close6:hover
+      .close7:hover
+      .close8:hover
+      .close9:hover
+      .close10:hover
+      .close11:hover
+      .close12:hover
+      .close13:hover
+      .close14:hover
+      .close15:hover
+      ,
+      .close:focus 
+      .close1:focus
+      .close2:focus
+      .close3:focus
+      .close4:focus
+      .close5:focus
+      .close6:focus
+      .close7:focus
+      .close8:focus
+      .close9:focus
+      .close10:focus
+      .close11:focus
+      .close12:focus
+      .close13:focus
+      .close14:focus
+      .close15:focus
+      {
+        
+        text-decoration: none;
+        cursor: pointer;
+      }
+      /* modal window ends */
+
+      /* form starts here */
+      .wrapper{
+  position: relative;
+  max-width: 430px;
+  width: 100%;
+  background: #fff;
+  padding: 34px;
+  border-radius: 6px;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}
+.wrapper h2{
+  position: relative;
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+}
+.wrapper h2::before{
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 28px;
+  border-radius: 12px;
+  background: #4070f4;
+}
+.wrapper form{
+  margin-top: 30px;
+}
+.wrapper form .input-box{
+  height: 52px;
+  margin: 18px 0;
+}
+form .input-box input{
+  height: 100%;
+  width: 100%;
+  outline: none;
+  padding: 0 15px;
+  font-size: 17px;
+  font-weight: 400;
+  color: #333;
+  border: 1.5px solid #C7BEBE;
+  border-bottom-width: 2.5px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+.input-box input:focus,
+.input-box input:valid{
+  border-color: #4070f4;
+}
+form .policy{
+  display: flex;
+  align-items: center;
+}
+form h3{
+  color: #707070;
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: 10px;
+}
+.input-box.button input{
+  color: #fff;
+  letter-spacing: 1px;
+  border: none;
+  background: #4070f4;
+  cursor: pointer;
+}
+.input-box.button input:hover{
+  background: #0e4bf1;
+}
+form .text h3{
+ color: #333;
+ width: 100%;
+ text-align: center;
+}
+form .text h3 a{
+  color: #4070f4;
+  text-decoration: none;
+}
+form .text h3 a:hover{
+  text-decoration: underline;
+}
+.addavionics{
+    background-color: #0c479f;
+                border-radius: 0.25em;
+                color: white;
+                padding: 0.25em;
+                text-decoration: none;
+}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Sidebar -->
+
+      <aside class="sidebar">
+        <h2>Inventory</h2>
+        <nav>
+          <ul>
+            <li>
+              <a href="/users/dashboard"
+                ><i class="fas fa-home"></i> Dashboard</a
+              >
+            </li>
+            <li>
+              <a href="#"><i class="fas fa-address-book"></i> Contacts</a>
+            </li>
+            <li>
+              <a href="/users/profile"><i class="fas fa-user"></i> Profile</a>
+            </li>
+            <li>
+              <a href="/users/instock"
+                ><i class="fas fa-boxes"></i> Inventory</a
+              >
+            </li>
+            <li>
+              <a href="#"><i class="fas fa-chart-line"></i> Reports</a>
+            </li>
+            <li>
+              <a href="#"><i class="fas fa-cog"></i> Borrow</a>
+            </li>
+            <li>
+              <a href="/users/logout"
+                ><i class="fas fa-sign-out-alt"></i> Logout</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- Main content with pie chart -->
+      <div class="main-content">
+        <header
+          class="header"
+          style="display: flex; justify-content: space-between"
+        >
+          <h1>Avionics</h1>
+          <div class="buttons-avionics">
+            <a
+              href="/users/instock"
+              style="
+                background-color: #0c479f;
+                border-radius: 0.25em;
+                color: white;
+                padding: 0.5em;
+                text-decoration: none;
+              "
+              >Back</a
+            >
+          </div>
+        </header>
+
+        <div class="tabset" style="overflow: auto;">
+          <!-- Tab 1 -->
+          <input type="radio" name="tabset" id="tab1" aria-controls="motors" checked/>
+          <label for="tab1">Motors</label>
+          <!-- Tab 2 -->
+          <input type="radio" name="tabset" id="tab2" aria-controls="HighTorqueservo" />
+          <label for="tab2">HighTorque servo</label>
+          <!-- Tab 3 -->
+          <input type="radio" name="tabset" id="tab3" aria-controls="PlasticServo" />
+          <label for="tab3">Plastic servo</label>
+        <!-- Tab 4 -->
+        <input type="radio" name="tabset" id="tab4" aria-controls="MetalServo" />
+        <label for="tab4">Metal Servo</label>
+        <!-- Tab 5 -->
+        <input type="radio" name="tabset" id="tab5" aria-controls="DigitalServo" />
+        <label for="tab5">Digital Servo</label>
+        <!-- Tab 6 -->
+        <input type="radio" name="tabset" id="tab6" aria-controls="Rx" />
+        <label for="tab6">Reciever</label>
+        <!-- Tab 7 -->
+        <input type="radio" name="tabset" id="tab7" aria-controls="ElectronicSpeedController"  />
+        <label for="tab7">ESC</label>
+         <!-- Tab 8 -->
+         <input type="radio" name="tabset" id="tab8" aria-controls="LIPOBattery" />
+         <label for="tab8">Li-Po Battery</label>
+          <!-- Tab 9 -->
+          <input type="radio" name="tabset" id="tab9" aria-controls="AABattery" />
+          <label for="tab9">AA-Battery</label>
+           <!-- Tab 10 -->
+         <input type="radio" name="tabset" id="tab10" aria-controls="FC" />
+         <label for="tab10">Flight Controller</label>
+             <!-- Tab 11 -->
+         <input type="radio" name="tabset" id="tab11" aria-controls="BatteryChecker" />
+         <label for="tab11">Battery Checker</label>
+          <!-- Tab 12 -->
+          <input type="radio" name="tabset" id="tab12" aria-controls="Gps" />
+          <label for="tab12">GPS</label>
+          <!-- Tab 13 -->
+          <input type="radio" name="tabset" id="tab13" aria-controls="Telemetry" />
+          <label for="tab13">Telemetry</label>
+          <!-- Tab 14 -->
+          <input type="radio" name="tabset" id="tab14" aria-controls="Rasberrypie" />
+          <label for="tab14">Rasberry pie</label>
+          <!-- Tab 15 -->
+          <input type="radio" name="tabset" id="tab15" aria-controls="VTOLElectronics" />
+          <label for="tab15">VTOL-electronics</label>
+          <!-- Tab 16 -->
+          <input type="radio" name="tabset" id="tab16" aria-controls="Tx" />
+          <label for="tab16">Transmitter</label>
+
+
+
+          <div class="tab-panels">
+
+            <section id="motors" class="tab-panel">
+
+                <button id="myBtn" class="addavionics">Add new motor</button>
+
+                <div id="myModal" class="modal">
+
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <form action="/users/motors" method="POST">
+                            <div class="input-box">
+                              <input type="text" placeholder="Enter motor number" name="motornumber" required>
+                            </div>
+                            <div class="input-box">
+                              <input type="text" placeholder="Enter Company" name="company" required>
+                            </div>
+                            <div class="input-box">
+                                <input type="text" placeholder="Enter KV Rating" name="kvrating" required>
+                              </div>
+                              <div class="input-box">
+                                <input type="text" placeholder="Enter Model Number" name="Modelnumber" required>
+                              </div>
+                              <div class="flexing" style="display: flex;">
+                                <div class="input-box"></div>
+                                <input type="date" placeholder="Enter Model Number" name="namedon" required>
+                              </div>
+                              <div class="input-box button" style="margin:1% ;">
+                                <input type="Submit" value="Submit">
+                              </div>
+                              </div>
+                          </form>
+                      </div>
+            
+              <table class="table" style="margin-top: 2%">
+                <thead>
+                  <tr>
+                    <th scope="col">Motor Number</th>
+                    <th scope="col">Company</th>
+                    <th scope="col">KV Rating</th>
+                    <th scope="col">Model Number</th>
+                    <th scope="col">Named On</th>
+                    <th scope='col'>Delete</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% m_data.forEach((motor) => { %>
+                    <% if (motor !== null && motor !== undefined) { %>
+                      <tr>
+                        <td><%= motor.motornumber %></td>
+                        <td><%= motor.company  %></td>
+                        <td><%= motor.kvrating  %></td>
+                        <td><%= motor.modelnumber  %></td>
+                        <td><%= motor.namedon  %></td>
+                        <td>  <form action="/users/avionics/<%=motor.motornumber %>?_method=DELETE" method="post">
+                          <button type="submit">Delete</button>
+                        </form>
+                      </td>
+                      </tr>
+                    <% } %>
+                  <% }); %>
+                </tbody>
+              </table>
+
+            </section>
+                
+           
+
+            <section id="HighTorqueservo" class="tab-panel">
+                <button id="myBtn1" class="addavionics">Add new HT_servo</button>
+                
+                <div id="myModal1" class="modal">
+
+                    <div class="modal-content">
+                        <span class="close1">&times;</span>
+                        <form action="/users/htservo" method="POST">
+                            <div class="input-box">
+                              <input type="text" placeholder="Enter HighTorque servo number" name="htservonumber" required>
+                            </div>
+                            <div class="input-box">
+                              <input type="text" placeholder="Enter HighTorque servo Company" name="htservocompany" required>
+                            </div>
+                              <div class="input-box">
+                                    <label for="htstatus">Status:</label>
+                                <select name="htstatus" placeholder="Enter status">
+                                    <option value="working">working</option>
+                                    <option value="not-working">not-working</option>
+                                </select>
+                                <!-- <input type="text" placeholder="Enter Status" name="htstatus" required> -->
+                              </div>
+                              <div class="input-box">
+                                <input type="text" placeholder="Enter HighTorque servo Model Number" name="htmodel" required>
+                              </div>
+                              <div class="flexing" style="display: flex;">
+                                <div class="input-box"></div>
+                                <input type="date" placeholder="Enter Model Number" name="htnamedon" required>
+                              </div>
+                              <div class="input-box button" style="margin:1% ;">
+                                <input type="Submit" value="Submit">
+                              </div>
+                              </div>
+
+                          </form>
+
+                        </div>
+
+                          <table class="table" style="margin-top: 2%">
+                            <thead>
+                              <tr>
+                                <th scope="col">Servo Number</th>
+                                <th scope="col">Servo Company</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Model Number</th>
+                                <th scope="col">Named On</th>
+                                <th scope='col'>Delete</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <% ht_data.forEach((ht) => { %>
+                                <% if (ht !== null && ht !== undefined) { %>
+                                  <tr>
+                                    <td><%= ht.htservonumber %></td>
+                                    <td><%= ht.htservocompany  %></td>
+                                    <td><%= ht.htstatus  %></td>
+                                    <td><%= ht.htmodel  %></td>
+                                    <td><%= ht.htnamedon  %></td>
+                                    <td>  </td>
+                                  </tr>
+                                <% } %>
+                              <% }); %>
+                            </tbody>
+                          </table>     
+            </section>
+
+          
+            <section id="PlasticServo" class="tab-panel">
+              <button id="myBtn2" class="addavionics">Add new Plastic Servo</button>
+                
+                <div id="myModal2" class="modal">
+
+                    <div class="modal-content">
+
+                        <span class="close2">&times;</span>
+
+                        <form action="/users/plservo" method="POST">
+                            <div class="input-box">
+                              <input type="text" placeholder="Enter servo number" name="plservonumber" required>
+                            </div>
+                            <div class="input-box">
+                              <input type="text" placeholder="Enter servo Company" name="plservocompany" required>
+                            </div>
+                              <div class="input-box">
+                                    <label for="htstatus">Status:</label>
+                                <select name="plstatus" placeholder="Enter status">
+                                    <option value="working">working</option>
+                                    <option value="not-working">not-working</option>
+                                </select>
+                                <!-- <input type="text" placeholder="Enter Status" name="htstatus" required> -->
+                              </div>
+                              <div class="input-box">
+                                <input type="text" placeholder="Enter servo Model Number" name="plmodel" required>
+                              </div>
+                              <div class="flexing" style="display: flex; justify-content:left;">
+                                <label for="date">Named on:</label>
+                                <div class="input-box" >
+                                 
+                                <input type="date" placeholder="Named On" name="plnamedon" required>
+                              </div>
+                              
+                              </div>
+                              <div  class="addavionics" style="margin:1% ;"></div>
+                                <input type="Submit" value="Submit">
+                              </div>
+                          </form>
+
+                        </div>
+
+
+                          <table class="table" style="margin-top: 2%">
+                            <thead>
+                              <tr>
+                                <th scope="col">Servo Number</th>
+                                <th scope="col">Servo Company</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Model Number</th>
+                                <th scope="col">Named On</th>
+                                <th scope='col'>Delete</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <% m_data.forEach((motor) => { %>
+                                <% if (motor !== null && motor !== undefined) { %>
+                                  <tr>
+                                    <td><%= motor.motornumber %></td>
+                                    <td><%= motor.company  %></td>
+                                    <td><%= motor.kvrating  %></td>
+                                    <td><%= motor.modelnumber  %></td>
+                                    <td><%= motor.namedon  %></td>
+                                    <td>  <form action="/users/avionics/<%= motor.motornumber %>?_method=DELETE" method="post">
+                                      <button type="submit">Delete</button>
+                                    </form>
+                                  </td>
+                                  </tr>
+                                <% } %>
+                              <% }); %>
+                            </tbody>
+                          </table>     
+            </section>
+
+            <section id="MetalServo" class="tab-panel">
+              <button id="myBtn3" class="addavionics">Add new Metal Servo</button>
+
+              <div id="myModal3" class="modal">
+
+                <div class="modal-content">
+                    <span class="close3">&times;</span>
+
+                    <form action="/users/motors" method="POST">
+                            <div class="input-box">
+                              <input type="text" placeholder="Enter servo number" name="mtservonumber" required>
+                            </div>
+                            <div class="input-box">
+                              <input type="text" placeholder="Enter servo Company" name="mtcompany" required>
+                            </div>
+                              <div class="input-box">
+                                    <label for="htstatus">Status:</label>
+                                <select name="htstatus" placeholder="Enter status">
+                                    <option value="working">working</option>
+                                    <option value="not-working">not-working</option>
+                                </select>
+                                <!-- <input type="text" placeholder="Enter Status" name="htstatus" required> -->
+                              </div>
+                              <div class="input-box">
+                                <input type="text" placeholder="Enter servo Model Number" name="Modelnumber" required>
+                              </div>
+                              <div class="flexing" style="display: flex; justify-content:left;">
+                                <label for="date">Named on:</label>
+                                <div class="input-box" >
+                                 
+                                <input type="date" placeholder="Named On" name="namedon" required>
+                              </div>
+                              
+                              </div>
+                              <div  class="addavionics" style="margin:1% ;"></div>
+                                <input type="Submit" value="Submit">
+                              </div>
+                          </form>
+
+                      <table class="table" style="margin-top: 2%">
+                            <thead>
+                              <tr>
+                                <th scope="col">Servo Number</th>
+                                <th scope="col">Servo Company</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Model Number</th>
+                                <th scope="col">Named On</th>
+                                <th scope='col'>Delete</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <% m_data.forEach((motor) => { %>
+                                <% if (motor !== null && motor !== undefined) { %>
+                                  <tr>
+                                    <td><%= motor.motornumber %></td>
+                                    <td><%= motor.company  %></td>
+                                    <td><%= motor.kvrating  %></td>
+                                    <td><%= motor.modelnumber  %></td>
+                                    <td><%= motor.namedon  %></td>
+                                    <td>  <form action="/users/avionics/<%= motor.motornumber %>?_method=DELETE" method="post">
+                                      <button type="submit">Delete</button>
+                                    </form>
+                                  </td>
+                                  </tr>
+                                <% } %>
+                              <% }); %>
+                            </tbody>
+                          </table>     
+
+                    </div>
+
+                    <table class="table" style="margin-top: 2%">
+                      <thead>
+                        <tr>
+                          <th scope="col">Servo Number</th>
+                          <th scope="col">Servo Company</th>
+                          <th scope="col">Status</th>
+                          <th scope="col">Model Number</th>
+                          <th scope="col">Named On</th>
+                          <th scope='col'>Delete</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% m_data.forEach((motor) => { %>
+                          <% if (motor !== null && motor !== undefined) { %>
+                            <tr>
+                              <td><%= motor.motornumber %></td>
+                              <td><%= motor.company  %></td>
+                              <td><%= motor.kvrating  %></td>
+                              <td><%= motor.modelnumber  %></td>
+                              <td><%= motor.namedon  %></td>
+                              <td>  <form action="/users/avionics/<%= motor.motornumber %>?_method=DELETE" method="post">
+                                <button type="submit">Delete</button>
+                              </form>
+                            </td>
+                            </tr>
+                          <% } %>
+                        <% }); %>
+                      </tbody>
+                    </table>     
+
+            </section>
+
+            <section id="DigitalServo" class="tab-panel">
+              <button id="myBtn4" class="addavionics">Add new Digital Servo</button>
+
+              <div id="myModal4" class="modal">
+
+                <div class="modal-content">
+                    <span class="close4">&times;</span>
+                    <form action="/users/motors" method="POST">
+                      <div class="input-box">
+                        <input type="text" placeholder="Enter servo number" name="htservonumber" required>
+                      </div>
+                      <div class="input-box">
+                        <input type="text" placeholder="Enter servo Company" name="htcompany" required>
+                      </div>
+                        <div class="input-box">
+                              <label for="htstatus">Status:</label>
+                          <select name="htstatus" placeholder="Enter status">
+                              <option value="working">working</option>
+                              <option value="not-working">not-working</option>
+                          </select>
+                          <!-- <input type="text" placeholder="Enter Status" name="htstatus" required> -->
+                        </div>
+                        <div class="input-box">
+                          <input type="text" placeholder="Enter servo Model Number" name="Modelnumber" required>
+                        </div>
+                        <div class="flexing" style="display: flex; justify-content:left;">
+                          <label for="date">Named on:</label>
+                          <div class="input-box" >
+                           
+                          <input type="date" placeholder="Named On" name="namedon" required>
+                        </div>
+                        
+                        </div>
+                        <div  class="addavionics" style="margin:1% ;"></div>
+                          <input type="Submit" value="Submit">
+                        </div>
+                    </form>
+                    </div>
+
+                    <table class="table" style="margin-top: 2%">
+                      <thead>
+                        <tr>
+                          <th scope="col">Servo Number</th>
+                          <th scope="col">Servo Company</th>
+                          <th scope="col">Status</th>
+                          <th scope="col">Model Number</th>
+                          <th scope="col">Named On</th>
+                          <th scope='col'>Delete</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% m_data.forEach((motor) => { %>
+                          <% if (motor !== null && motor !== undefined) { %>
+                            <tr>
+                              <td><%= motor.motornumber %></td>
+                              <td><%= motor.company  %></td>
+                              <td><%= motor.kvrating  %></td>
+                              <td><%= motor.modelnumber  %></td>
+                              <td><%= motor.namedon  %></td>
+                              <td>  <form action="/users/avionics/<%= motor.motornumber %>?_method=DELETE" method="post">
+                                <button type="submit">Delete</button>
+                              </form>
+                            </td>
+                            </tr>
+                          <% } %>
+                        <% }); %>
+                      </tbody>
+                    </table>     
+
+            </section>
+
+            <section id="Rx" class="tab-panel">
+              <button id="myBtn5" class="addavionics">Add new Rx</button>
+
+              <div id="myModal5" class="modal">
+
+                <div class="modal-content">
+                    <span class="close5">&times;</span>
+                    <form action="/users/motors" method="POST">
+                      <div class="input-box">
+                        <input type="text" placeholder="Enter servo number" name="htservonumber" required>
+                      </div>
+                      <div class="input-box">
+                        <input type="text" placeholder="Enter servo Company" name="htcompany" required>
+                      </div>
+                        <div class="input-box">
+                              <label for="htstatus">Status:</label>
+                          <select name="htstatus" placeholder="Enter status">
+                              <option value="working">working</option>
+                              <option value="not-working">not-working</option>
+                          </select>
+                          <!-- <input type="text" placeholder="Enter Status" name="htstatus" required> -->
+                        </div>
+                        <div class="input-box">
+                          <input type="text" placeholder="Enter servo Model Number" name="Modelnumber" required>
+                        </div>
+                        <div class="flexing" style="display: flex; justify-content:left;">
+                          <label for="date">Named on:</label>
+                          <div class="input-box" >
+                           
+                          <input type="date" placeholder="Named On" name="namedon" required>
+                        </div>
+                        
+                        </div>
+                        <div  class="addavionics" style="margin:1% ;"></div>
+                          <input type="Submit" value="Submit">
+                        </div>
+                    </form>
+
+                    </div>
+            </section>
+
+        
+
+            <section id="ElectronicSpeedController" class="tab-panel">
+              <button id="myBtn6" class="addavionics">Add new ESC</button>
+
+              <div id="myModal6" class="modal">
+
+                <div class="modal-content">
+                    <span class="close6">&times;</span>
+                    <form action="/users/motors" method="POST">
+                      <div class="input-box">
+                        <input type="text" placeholder="Enter servo number" name="htservonumber" required>
+                      </div>
+                      <div class="input-box">
+                        <input type="text" placeholder="Enter servo Company" name="htcompany" required>
+                      </div>
+                        <div class="input-box">
+                              <label for="htstatus">Status:</label>
+                          <select name="htstatus" placeholder="Enter status">
+                              <option value="working">working</option>
+                              <option value="not-working">not-working</option>
+                          </select>
+                          <!-- <input type="text" placeholder="Enter Status" name="htstatus" required> -->
+                        </div>
+                        <div class="input-box">
+                          <input type="text" placeholder="Enter servo Model Number" name="Modelnumber" required>
+                        </div>
+                        <div class="flexing" style="display: flex; justify-content:left;">
+                          <label for="date">Named on:</label>
+                          <div class="input-box" >
+                           
+                          <input type="date" placeholder="Named On" name="namedon" required>
+                        </div>
+                        
+                        </div>
+                        <div  class="addavionics" style="margin:1% ;"></div>
+                          <input type="Submit" value="Submit">
+                        </div>
+                    </form>
+                    </div>
+
+            </section>
+
+            <section id="LIPOBattery" class="tab-panel">
+              <button id="myBtn7" class="addavionics">Add new LIPO</button>
+
+
+              <div id="myModal7" class="modal">
+
+                <div class="modal-content">
+                    <span class="close7">&times;</span>
+                    <form action="/users/motors" method="POST">
+                        <div class="input-box">
+                          <input type="text" placeholder="Enter HighTorque servo number" name="htservonumber" required>
+                        </div>
+                        <div class="input-box">
+                          <input type="text" placeholder="Enter HighTorque servo Company" name="htcompany" required>
+                        </div>
+                          <div class="input-box">
+                                <label for="htstatus">Status:</label>
+                            <select name="htstatus" placeholder="Enter status">
+                                <option value="working">working</option>
+                                <option value="not-working">not-working</option>
+                            </select>
+                            <!-- <input type="text" placeholder="Enter Status" name="htstatus" required> -->
+                          </div>
+                          <div class="input-box">
+                            <input type="text" placeholder="Enter HighTorque servo Model Number" name="Modelnumber" required>
+                          </div>
+                          <div class="flexing" style="display: flex;">
+                            <div class="input-box"></div>
+                            <input type="date" placeholder="Enter Model Number" name="namedon" required>
+                          </div>
+                          <div class="input-box button" style="margin:1% ;">
+                            <input type="Submit" value="Submit">
+                          </div>
+                          </div>
+                      </form>
+
+                    </div>
+            </section>
+
+            <section id="AABattery" class="tab-panel">
+              <button id="myBtn8" class="addavionics">Add new AA</button>
+
+              <div id="myModal8" class="modal">
+
+                <div class="modal-content">
+                    <span class="close8">&times;</span>
+                    <form action="/users/motors" method="POST">
+                        <div class="input-box">
+                          <input type="text" placeholder="Enter HighTorque servo number" name="htservonumber" required>
+                        </div>
+                        <div class="input-box">
+                          <input type="text" placeholder="Enter HighTorque servo Company" name="htcompany" required>
+                        </div>
+                          <div class="input-box">
+                                <label for="htstatus">Status:</label>
+                            <select name="htstatus" placeholder="Enter status">
+                                <option value="working">working</option>
+                                <option value="not-working">not-working</option>
+                            </select>
+                            <!-- <input type="text" placeholder="Enter Status" name="htstatus" required> -->
+                          </div>
+                          <div class="input-box">
+                            <input type="text" placeholder="Enter HighTorque servo Model Number" name="Modelnumber" required>
+                          </div>
+                          <div class="flexing" style="display: flex;">
+                            <div class="input-box"></div>
+                            <input type="date" placeholder="Enter Model Number" name="namedon" required>
+                          </div>
+                          <div class="input-box button" style="margin:1% ;">
+                            <input type="Submit" value="Submit">
+                          </div>
+                          </div>
+                      </form>
+
+                    </div>
+            </section>
+
+            <section id="FC" class="tab-panel">
+              <button id="myBtn9" class="addavionics">Add new FC</button>
+
+              <div id="myModal9" class="modal">
+
+                <div class="modal-content">
+                    <span class="close9">&times;</span>
+                    <form action="/users/motors" method="POST">
+                        <div class="input-box">
+                          <input type="text" placeholder="Enter HighTorque servo number" name="htservonumber" required>
+                        </div>
+                        <div class="input-box">
+                          <input type="text" placeholder="Enter HighTorque servo Company" name="htcompany" required>
+                        </div>
+                          <div class="input-box">
+                                <label for="htstatus">Status:</label>
+                            <select name="htstatus" placeholder="Enter status">
+                                <option value="working">working</option>
+                                <option value="not-working">not-working</option>
+                            </select>
+                            <!-- <input type="text" placeholder="Enter Status" name="htstatus" required> -->
+                          </div>
+                          <div class="input-box">
+                            <input type="text" placeholder="Enter HighTorque servo Model Number" name="Modelnumber" required>
+                          </div>
+                          <div class="flexing" style="display: flex;">
+                            <div class="input-box"></div>
+                            <input type="date" placeholder="Enter Model Number" name="namedon" required>
+                          </div>
+                          <div class="input-box button" style="margin:1% ;">
+                            <input type="Submit" value="Submit">
+                          </div>
+                          </div>
+                      </form>
+
+                    </div>
+            </section>
+
+            <section id="BatteryChecker" class="tab-panel">
+              <button id="myBtn10" class="addavionics">Add new BatteryChecker</button>
+
+              <div id="myModal10" class="modal">
+
+                <div class="modal-content">
+                    <span class="close10">&times;</span>
+                    <form action="/users/motors" method="POST">
+                        <div class="input-box">
+                          <input type="text" placeholder="Enter HighTorque servo number" name="htservonumber" required>
+                        </div>
+                        <div class="input-box">
+                          <input type="text" placeholder="Enter HighTorque servo Company" name="htcompany" required>
+                        </div>
+                          <div class="input-box">
+                                <label for="htstatus">Status:</label>
+                            <select name="htstatus" placeholder="Enter status">
+                                <option value="working">working</option>
+                                <option value="not-working">not-working</option>
+                            </select>
+                            <!-- <input type="text" placeholder="Enter Status" name="htstatus" required> -->
+                          </div>
+                          <div class="input-box">
+                            <input type="text" placeholder="Enter HighTorque servo Model Number" name="Modelnumber" required>
+                          </div>
+                          <div class="flexing" style="display: flex;">
+                            <div class="input-box"></div>
+                            <input type="date" placeholder="Enter Model Number" name="namedon" required>
+                          </div>
+                          <div class="input-box button" style="margin:1% ;">
+                            <input type="Submit" value="Submit">
+                          </div>
+                          </div>
+                      </form>
+
+                    </div>
+            </section>
+
+            <section id="Gps" class="tab-panel">
+              <button id="myBtn11" class="addavionics">Add new GPS</button>
+
+              <div id="myModal11" class="modal">
+
+                <div class="modal-content">
+                    <span class="close11">&times;</span>
+                    <form action="/users/motors" method="POST">
+                        <div class="input-box">
+                          <input type="text" placeholder="Enter HighTorque servo number" name="htservonumber" required>
+                        </div>
+                        <div class="input-box">
+                          <input type="text" placeholder="Enter HighTorque servo Company" name="htcompany" required>
+                        </div>
+                          <div class="input-box">
+                                <label for="htstatus">Status:</label>
+                            <select name="htstatus" placeholder="Enter status">
+                                <option value="working">working</option>
+                                <option value="not-working">not-working</option>
+                            </select>
+                            <!-- <input type="text" placeholder="Enter Status" name="htstatus" required> -->
+                          </div>
+                          <div class="input-box">
+                            <input type="text" placeholder="Enter HighTorque servo Model Number" name="Modelnumber" required>
+                          </div>
+                          <div class="flexing" style="display: flex;">
+                            <div class="input-box"></div>
+                            <input type="date" placeholder="Enter Model Number" name="namedon" required>
+                          </div>
+                          <div class="input-box button" style="margin:1% ;">
+                            <input type="Submit" value="Submit">
+                          </div>
+                          </div>
+                      </form>
+
+                    </div>
+            </section>
+
+            <section id="Telemetry" class="tab-panel">
+              <button id="myBtn12" class="addavionics">Add new Telemetry</button>
+
+              <div id="myModal12" class="modal">
+
+                <div class="modal-content">
+                    <span class="close12">&times;</span>
+                    <form action="/users/motors" method="POST">
+                        <div class="input-box">
+                          <input type="text" placeholder="Enter HighTorque servo number" name="htservonumber" required>
+                        </div>
+                        <div class="input-box">
+                          <input type="text" placeholder="Enter HighTorque servo Company" name="htcompany" required>
+                        </div>
+                          <div class="input-box">
+                                <label for="htstatus">Status:</label>
+                            <select name="htstatus" placeholder="Enter status">
+                                <option value="working">working</option>
+                                <option value="not-working">not-working</option>
+                            </select>
+                            <!-- <input type="text" placeholder="Enter Status" name="htstatus" required> -->
+                          </div>
+                          <div class="input-box">
+                            <input type="text" placeholder="Enter HighTorque servo Model Number" name="Modelnumber" required>
+                          </div>
+                          <div class="flexing" style="display: flex;">
+                            <div class="input-box"></div>
+                            <input type="date" placeholder="Enter Model Number" name="namedon" required>
+                          </div>
+                          <div class="input-box button" style="margin:1% ;">
+                            <input type="Submit" value="Submit">
+                          </div>
+                          </div>
+                      </form>
+
+                    </div>
+            </section>
+
+            <section id="Rasberrypie" class="tab-panel">
+              <button id="myBtn13" class="addavionics">Add new Rasberry-pi</button>
+
+              <div id="myModal13" class="modal">
+
+                <div class="modal-content">
+                    <span class="close13">&times;</span>
+                    <form action="/users/motors" method="POST">
+                        <div class="input-box">
+                          <input type="text" placeholder="Enter HighTorque servo number" name="htservonumber" required>
+                        </div>
+                        <div class="input-box">
+                          <input type="text" placeholder="Enter HighTorque servo Company" name="htcompany" required>
+                        </div>
+                          <div class="input-box">
+                                <label for="htstatus">Status:</label>
+                            <select name="htstatus" placeholder="Enter status">
+                                <option value="working">working</option>
+                                <option value="not-working">not-working</option>
+                            </select>
+                            <!-- <input type="text" placeholder="Enter Status" name="htstatus" required> -->
+                          </div>
+                          <div class="input-box">
+                            <input type="text" placeholder="Enter HighTorque servo Model Number" name="Modelnumber" required>
+                          </div>
+                          <div class="flexing" style="display: flex;">
+                            <div class="input-box"></div>
+                            <input type="date" placeholder="Enter Model Number" name="namedon" required>
+                          </div>
+                          <div class="input-box button" style="margin:1% ;">
+                            <input type="Submit" value="Submit">
+                          </div>
+                          </div>
+                      </form>
+
+                    </div>
+            </section>
+
+            <section id="VTOLElectronics" class="tab-panel">
+              <button id="myBtn14" class="addavionics">Add new VTOL Avionics</button>
+
+              <div id="myModal14" class="modal">
+
+                <div class="modal-content">
+                    <span class="close14">&times;</span>
+                    <form action="/users/motors" method="POST">
+                        <div class="input-box">
+                          <input type="text" placeholder="Enter HighTorque servo number" name="htservonumber" required>
+                        </div>
+                        <div class="input-box">
+                          <input type="text" placeholder="Enter HighTorque servo Company" name="htcompany" required>
+                        </div>
+                          <div class="input-box">
+                                <label for="htstatus">Status:</label>
+                            <select name="htstatus" placeholder="Enter status">
+                                <option value="working">working</option>
+                                <option value="not-working">not-working</option>
+                            </select>
+                            <!-- <input type="text" placeholder="Enter Status" name="htstatus" required> -->
+                          </div>
+                          <div class="input-box">
+                            <input type="text" placeholder="Enter HighTorque servo Model Number" name="Modelnumber" required>
+                          </div>
+                          <div class="flexing" style="display: flex;">
+                            <div class="input-box"></div>
+                            <input type="date" placeholder="Enter Model Number" name="namedon" required>
+                          </div>
+                          <div class="input-box button" style="margin:1% ;">
+                            <input type="Submit" value="Submit">
+                          </div>
+                          </div>
+                      </form>
+
+                    </div>
+            </section>
+
+            <section id="Tx" class="tab-panel">
+              <button id="myBtn15" class="addavionics">Add new Tx</button>
+
+              <div id="myModal15" class="modal">
+
+                <div class="modal-content">
+                    <span class="close15">&times;</span>
+                    <form action="/users/motors" method="POST">
+                        <div class="input-box">
+                          <input type="text" placeholder="Enter HighTorque servo number" name="htservonumber" required>
+                        </div>
+                        <div class="input-box">
+                          <input type="text" placeholder="Enter HighTorque servo Company" name="htcompany" required>
+                        </div>
+                          <div class="input-box">
+                                <label for="htstatus">Status:</label>
+                            <select name="htstatus" placeholder="Enter status">
+                                <option value="working">working</option>
+                                <option value="not-working">not-working</option>
+                            </select>
+                            <!-- <input type="text" placeholder="Enter Status" name="htstatus" required> -->
+                          </div>
+                          <div class="input-box">
+                            <input type="text" placeholder="Enter HighTorque servo Model Number" name="Modelnumber" required>
+                          </div>
+                          <div class="flexing" style="display: flex;">
+                            <div class="input-box"></div>
+                            <input type="date" placeholder="Enter Model Number" name="namedon" required>
+                          </div>
+                          <div class="input-box button" style="margin:1% ;">
+                            <input type="Submit" value="Submit">
+                          </div>
+                          </div>
+                      </form>
+
+                    </div>
+            </section>
+
+          </div>
+        </div>
+
+        
+        <!-- <section class="chart-section">
+                <canvas id="inventoryChart"></canvas>
+                <ul>
+                    <li><a href="">Tools</a></li>
+                    <li><a href="">Fuselage</a></li>
+                    <li><a href="">Wing</a></li>
+                    <li><a href="">Landing gear</a></li>
+                    <li><a href="">Stationery</a></li>
+                    <li><a href="">Frames</a></li>
+                    <li><a href="">Shock absorber</a></li>
+                    <li><a href="">VTOL</a></li>
+                </ul>
+            
+            </section> -->
+      </div>
+    </div>
+
+    <script>
+      var modal = document.getElementById("myModal");
+      var modal1= document.getElementById("myModal1")
+      var modal2= document.getElementById("myModal2")
+      var modal3= document.getElementById("myModal3")
+      var modal4= document.getElementById("myModal4")
+      var modal5= document.getElementById("myModal5")
+      var modal6= document.getElementById("myModal6")
+      var modal7= document.getElementById("myModal7")
+      var modal8= document.getElementById("myModal8")
+      var modal9= document.getElementById("myModal9")
+      var modal10= document.getElementById("myModal10")
+      var modal11= document.getElementById("myModal11")
+      var modal12= document.getElementById("myModal12")
+      var modal13= document.getElementById("myModal13")
+      var modal14= document.getElementById("myModal14")
+      var modal15= document.getElementById("myModal15")
+
+      // Get the button that opens the modal
+      var btn = document.getElementById("myBtn");
+      var btn1 = document.getElementById("myBtn1");
+      var btn2 = document.getElementById("myBtn2");
+      var btn3 = document.getElementById("myBtn3");
+      var btn4 = document.getElementById("myBtn4");
+      var btn5 = document.getElementById("myBtn5");
+      var btn6 = document.getElementById("myBtn6");
+      var btn7 = document.getElementById("myBtn7");
+      var btn8 = document.getElementById("myBtn8");
+      var btn9 = document.getElementById("myBtn9");
+      var btn10 = document.getElementById("myBtn10");
+      var btn11 = document.getElementById("myBtn11");
+      var btn12 = document.getElementById("myBtn12");
+      var btn13 = document.getElementById("myBtn13");
+      var btn14 = document.getElementById("myBtn14");
+      var btn15 = document.getElementById("myBtn15");
+
+      // Get the <span> element that closes the modal
+      var span = document.getElementsByClassName("close")[0];
+      var span1 = document.getElementsByClassName("close1")[0];
+      var span2 = document.getElementsByClassName("close2")[0];
+      var span3 = document.getElementsByClassName("close3")[0];
+      var span4 = document.getElementsByClassName("close4")[0];
+      var span5 = document.getElementsByClassName("close5")[0];
+      var span6 = document.getElementsByClassName("close6")[0];
+      var span7 = document.getElementsByClassName("close7")[0];
+      var span8 = document.getElementsByClassName("close8")[0];
+      var span9 = document.getElementsByClassName("close9")[0];
+      var span10 = document.getElementsByClassName("close10")[0];
+      var span11 = document.getElementsByClassName("close11")[0];
+      var span12 = document.getElementsByClassName("close12")[0];
+      var span13 = document.getElementsByClassName("close13")[0];
+      var span14 = document.getElementsByClassName("close14")[0];
+      var span15 = document.getElementsByClassName("close15")[0];
+
+
+      function showModal(button,modal){
+        button.onclick =  function(){
+          modal.style.display='block'
+        }
+      }
+
+      function closeModal(span,modal){
+        span.onclick = function(){
+         modal.style.display='none'
+        }
+      }
+
+      showModal(btn,modal)
+      showModal(btn1,modal1)
+      showModal(btn2,modal2)
+      showModal(btn3,modal3)
+      showModal(btn4,modal4)
+      showModal(btn5,modal5)
+      showModal(btn6,modal6)
+      showModal(btn7,modal7)
+      showModal(btn8,modal8)
+      showModal(btn9,modal9)
+      showModal(btn10,modal10)
+      showModal(btn11,modal11)
+      showModal(btn12,modal12)
+      showModal(btn13,modal13)
+      showModal(btn14,modal14)
+      showModal(btn15,modal15)
+
+
+      closeModal(span,modal)
+      closeModal(span1,modal1)
+      closeModal(span2,modal2)
+      closeModal(span3,modal3)
+      closeModal(span4,modal4)
+      closeModal(span5,modal5)
+      closeModal(span6,modal6)
+      closeModal(span7,modal7)
+      closeModal(span8,modal8)
+      closeModal(span9,modal9)
+      closeModal(span10,modal10)
+      closeModal(span11,modal11)
+      closeModal(span12,modal12)
+      closeModal(span13,modal13)
+      closeModal(span14,modal14)
+      closeModal(span15,modal15)
+
+      
+
+      // When the user clicks anywhere outside of the modal, close it
+      // window.onclick = function (event) {
+      //   if (event.target == modal) {
+      //     modal.style.display = "none";
+      //   }
+      // };
+
+      // window.onclick = function (event) {
+      //   if (event.target == modal1) {
+      //     modal1.style.display = "none";
+      //   }
+      // };
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+      integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

@@ -9,6 +9,8 @@ const flash = require('express-flash');
 router.use(express.urlencoded({extended:false}))
 router.use(bodyParser.urlencoded({extended:true}))
 router.use(bodyParser.json())
+router.use(express.urlencoded({ extended: true }));
+
 
 router.use(
     session({

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory</title>
+    <link rel="stylesheet" href="dashStyle_2.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    background-color: #f4f4f4;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+}
+
+.sidebar {
+    width: 295px;
+    background-color: #0c479f;
+    padding: 20px;
+    color: #fff;
+    margin-left: -9.5%;
+    height: 110vh;
+}
+
+.sidebar h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    margin-left: 0.34em;
+
+}
+
+.sidebar ul {
+    list-style: none;
+    margin-left: 2.1%;
+    
+}
+
+.sidebar ul li {
+    margin-bottom: 15px;
+    margin-left: -15%;
+}
+
+.sidebar ul li a {
+    color: #ecf0f1;
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+
+.sidebar ul li a:hover {
+    background-color: #2980b9;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+    margin-left: 2%;
+}
+
+.header {
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 28px;
+    color: #333;
+}
+
+.chart-section {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+canvas {
+    max-width: 100%;
+    height: 100%;
+}
+/* .chart-section ul{
+    margin-top: -13%;
+    display: flex;
+    list-style-type: none;
+    justify-content:space-around ;
+    padding: 0.5em;
+    border-radius: 0.5vh;
+    overflow-x: auto;
+}
+.chart-section ul li{
+    background-color:  #0c479f;
+    border-radius: 0.1em;
+    text-align: justify;
+    padding: 0.5em;
+    border-radius: 0.25em;
+    box-shadow:0px 4px 6px rgba(0, 0, 0, 0.1) ;
+
+}
+.chart-section ul li a{
+ text-decoration: none;
+ color: #ecf0f1;
+
+} */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        
+        <aside class="sidebar">
+            <h2>Inventory</h2>
+            <nav>
+                <ul>
+                    <li><a href="/users/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="#"><i class="fas fa-address-book"></i> Contacts</a></li>
+                    <li><a href="#"><i class="fas fa-user"></i> Profile</a></li>
+                    <li><a href="/users/instock"><i class="fas fa-boxes"></i> Inventory</a></li>
+                    <li><a href="#"><i class="fas fa-chart-line"></i> Reports</a></li>
+                    <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                    <li><a href="/users/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main content with pie chart -->
+        <div class="main-content">
+            <header class="header">
+                <h1>In-Stock</h1>
+            </header>
+            
+
+            <div class="cards">
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    <div class="col">
+                      <div class="card">
+                        <img src="/images/avionics.png" style="height: 30vh;" class="card-img-top" alt="...">
+                        <div class="card-body">
+                          <h5 class="card-title">Avionics</h5>
+                          <p class="card-text">
+                            <a class="nav-link" href="/users/avionics">Check now ➡️</a>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="card">
+                        <img src="/images/tools.jpeg" style="height: 30vh;" class="card-img-top" alt="...">
+                        <div class="card-body">
+                          <h5 class="card-title">Tools</h5>
+                          <a class="nav-link" href="/users/avionics">Check now ➡️</a>                        </div>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="card">
+                        <img src="/images/fuselages.jpeg" style="height: 30vh;"  class="card-img-top" alt="...">
+                        <div class="card-body">
+                          <h5 class="card-title">Fuselage</h5>
+                          <a class="nav-link" href="/users/avionics">Check now ➡️</a>                        </div>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="card">
+                        <img src="/images/infinitydrones.png" style="height: 30vh;" class="card-img-top" alt="...">
+                        <div class="card-body">
+                          <h5 class="card-title">Infinity drones</h5>
+                          <a class="nav-link" href="/users/avionics">Check now ➡️</a>                        </div>
+                      </div>
+                    </div>
+                  </div>
+            </div>
+            
+
+
+        </div>
+       
+    </div>
+
+    <script>
+        /* Pie Chart using Chart.js
+        const ctx = document.getElementById('inventoryChart').getContext('2d');
+        const inventoryChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Electronics', 'Furniture', 'Clothing', 'Miscellaneous'],
+                datasets: [{
+                    label: 'Inventory Distribution',
+                    data: [30, 20, 40, 10],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Inventory Management'
+                    }
+                }
+            }
+        });*/
+    </script>
+    
+
+
+
+     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+    
+</body>
+</html>
